@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block page_title %}{% translate 'Acerca' %} | {{ vss.branding.site_name }}{% endblock %}
+{% block header %}{% include "partials/header.html" with navbar_class='navbar-light bg-secondary' %}{% endblock %}
+{% block layout %}
+<div class="bg-secondary pb-4 pt-lg-4">
+    <nav class="container" aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item">
+                <a href="{% url 'vss_industry_index' %}"><i class="bx bx-home-alt fs-lg me-1"></i>{% translate 'Inicio' %}</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">{% translate 'Acerca' %}</li>
+        </ol>
+    </nav>
+</div>
+<section class="position-relative mb-5 bg-secondary">
+    <span class="d-block position-absolute start-0 bottom-0 w-100 bg-white" style="height: 19.875vw;"></span>
+    <div class="container position-relative zindex-2 pt-lg-2">
+        <div class="row">
+            <div class="col">
+                <h1 class="pb-3 pb-md-4 mb-lg-5">{% translate '¿Quiénes somos?' %}</h1>
+            </div>
+        </div>
+        {% with gallery=vss_industry.gallery %}
+            {% if gallery %}
+            <div class="row g-md-4 g-3">
+                {% for gallery_image in gallery %}
+                    {% if forloop.first %}
+                        <div class="col-md-6">
+                            <img src="{{ gallery_image.image.url }}" alt="Hero image" class="rounded-3">
+                        </div>
+                    {% elif forloop.counter < 4 %}
+                    <div class="col-md-3 col-6 d-md-block d-none">
+                        <img src="{{ gallery_image.image.url }}" alt="Hero image" class="rounded-3">
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endwith %}
+    </div>
+</section>
+{% with about=vss_industry.about %}
+<section class="container pb-5 pt-lg-4 pt-xl-5">
+    <div class="row pt-2 pt-md-3">
+        <div class="col-md-6">
+            <p class="fs-lg pe-lg-4 mb-1 mb-lg-4">{{ about.description|linebreaksbr }}</p>
+        </div>
+        <div class="col-md-6">
+            {% if about.mission %}
+            <h4 class="mb-2 pb-1">{% translate 'Misión' %}</h4>
+            <p class="fs-lg ps-lg-4 mb-1 mb-lg-4">{{ about.mission|linebreaksbr }}</p>
+            {% endif %}
+            {% if about.vision %}
+            <h4 class="mb-2 pb-1">{% translate 'Visión' %}</h4>
+            <p class="fs-lg ps-lg-4 mb-1 mb-lg-4">{{ about.vision|linebreaksbr }}</p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endwith %}
+{% with timeline=vss_industry.timeline %}
+    {% if timeline %}
+        <section class="container mb-5 py-lg-4 py-xl-5 bg-secondary rounded-3">
+            <div class="mt-4 py-2 pb-sm-3 pb-md-4 pb-lg-5 mx-auto text-center" style="max-width: 46.625rem;">
+                <h2 class="h1 mb-lg-4">{% translate 'Nuestra Historia' %}</h2>
+                <p class="fs-lg text-muted mb-0">{% translate 'Momentos clave en la historia de nuestra empresa.' %}</p>
+            </div>
+            <div class="steps steps-center steps-sm steps-horizontal-lg" style="--si-steps-number-size-sm: 1.5rem; --si-steps-number-inner-size-sm: 1rem; --si-steps-number-bg: rgba(99,102,241,.2); --si-steps-number-inner-bg: #6366f1;">
+                {% for event in timeline %}
+                <div class="step w-100 mx-auto" style="max-width: 26rem;">
+                    <div class="step-number"><div class="step-number-inner"></div></div>
+                    <div class="step-body">
+                    <h3 class="mb-3">{{ event.year }}</h3>
+                    <p class="mb-0">{{ event.description }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+{% endwith %}
+{% with faqs=vss.faqs %}
+    {% if faqs %}
+    <section class="container py-lg-4 py-xl-5 mt-3 mb-5">
+        {% include "components/faqs.html" with faqs=faqs %}
+    </section>
+    {% endif %}
+{% endwith %}
+{% endblock %}

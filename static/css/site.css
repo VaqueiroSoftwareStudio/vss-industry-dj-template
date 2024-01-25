@@ -1,0 +1,57 @@
+.topbar {
+    position: relative;
+    padding: 0.5rem 1rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.875rem;
+}
+
+.topbar-link {
+    display: inline-block;
+    padding: 0.25rem 0;
+    transition: color 0.25s ease-in-out, background-color 0.25s ease-in-out, border-color 0.25s ease-in-out;
+    color: #92949e;
+    font-weight: 400;
+    text-decoration: none;
+}
+
+.topbar-link:hover {
+    color: #242835;
+    text-decoration: none;
+}
+
+.topbar-link.active {
+    color: #242835;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    cursor: default;
+}
+
+.dropdown.show>.topbar-link {
+    color: #242835;
+}
+
+.topbar-dark {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.topbar-dark .topbar-link {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.topbar-dark .topbar-link:hover {
+    color: #fff;
+}
+
+.topbar-dark .topbar-link.active {
+    color: #fff;
+}
+
+.topbar-dark .dropdown.show>.topbar-link {
+    color: #fff;
+}
+
+/* Fix chevron arrow not showing */
+.dropdown-toggle::after {
+    content: "\ea4a";
+}

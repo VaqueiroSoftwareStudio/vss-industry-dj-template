@@ -1,0 +1,17 @@
+{% load i18n %}
+{% with link=request.build_absolute_uri|urlencode %}
+<div class="mb-4 pb-lg-3">
+    <a title="{% translate 'Compartir en WhatsApp' %}" class="btn btn-icon btn-secondary me-2 mb-2" href="https://wa.me/?text={{ link }}" target="_blank">
+        <i class='bx bxl-whatsapp'></i>
+    </a>
+    <a title="{% translate 'Compartir en Twitter' %}" class="btn btn-icon btn-secondary me-2 mb-2" href="https://twitter.com/intent/tweet?text={{ link }}" target="_blank">
+        <i class='bx bxl-twitter'></i>
+    </a>
+    <a title="{% translate 'Compartir en LinkedIn' %}" class="btn btn-icon btn-secondary me-2 mb-2" href="https://www.linkedin.com/sharing/share-offsite/?url={{ link }}" target="_blank">
+        <i class='bx bxl-linkedin' ></i>
+    </a>
+    <a title="{% translate 'Compartir por Email' %}" class="btn btn-icon btn-secondary me-2 mb-2" href="mailto:?body={{ link }}" target="_blank">
+        <i class='bx bx-envelope' ></i>
+    </a>
+</div>
+{% endwith %}

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block page_title %}{% translate 'Error 404: Página no encontrada' %} | {{ vss.branding.site_name }}{% endblock %}
+{% block layout %}
+<section class="container my-5 py-5 min-vh-100">
+    <div class="row">
+        <div class="col-md-7 col-lg-6">
+            <h1 class="mb-4">{% translate 'Error 404: Página no encontrada' %}</h1>
+            <p class="mb-4 fs-lg">{% translate 'Parece que la página que estás buscando no está disponible. Por favor, utiliza el menú de navegación o el buscador para encontrar la información que necesitas.' %}</p>
+            <a href="/" class="btn btn-primary shadow-primary">
+                <i class="bx bx-home-alt me-2 ms-n1 lead"></i>
+                {% translate 'Página de Inicio' %}
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

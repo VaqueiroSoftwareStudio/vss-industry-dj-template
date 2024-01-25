@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block page_title %}{% translate 'Novedades' %} | {{ vss.branding.site_name }}{% endblock %}
+{% block layout %}
+<nav class="container mt-lg-4" aria-label="breadcrumb">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item">
+            <a href="{% url 'vss_industry_index' %}"><i class="bx bx-home-alt fs-lg me-1"></i>{% translate 'Inicio' %}</a>
+        </li>
+        {% if category %}
+        <li class="breadcrumb-item">
+            <a href="{% url 'vss_article_list' %}">{% translate 'Novedades' %}</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">{{ category.name }}</li>
+        {% else %}
+        <li class="breadcrumb-item active" aria-current="page">{% translate 'Novedades' %}</li>
+        {% endif %}
+    </ol>
+</nav>
+<section class="container mt-4 mb-2 mb-md-4 mb-lg-5 pt-lg-2 pb-5">
+    <div class="d-flex align-items-center justify-content-between mb-4 pb-1 pb-md-3">
+        <h1 class="mb-0">{% if category %}{{ category.name }}{% else %}{% translate 'Novedades' %}{% endif %}</h1>
+    </div>
+    <div class="row">
+        <div class="col-xl-9 col-lg-8">
+            {% for article in articles %}
+                {% include "components/article_card.html" with article=article %}
+                <div class="pb-2 pb-lg-3"></div>
+            {% empty %}
+                <div class="bg-secondary rounded-3 p-md-5 p-4">
+                    <div class="row">
+                        <h2 class="h3">{% translate 'Sin novedades' %}</h2>
+                        <p class="mb-0">{% translate 'No se encontraron artículos publicados.' %}</p>
+                    </div>
+                </div>
+            {% endfor %}
+            {% include "components/pagination.html" %}
+        </div>
+        <aside class="col-xl-3 col-lg-4">
+            <div class="offcanvas-lg offcanvas-end" id="blog-sidebar" tabindex="-1">
+                <div class="offcanvas-header border-bottom">
+                    <h3 class="offcanvas-title fs-lg">{% translate 'Barra lateral' %}</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#blog-sidebar" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <form action="{% url 'vss_article_list' %}" method="get" class="input-group mb-4">
+                        <input type="text" name="blog_search" value="{{ request.GET.blog_search }}" placeholder="{% translate 'Buscar en novedades ...' %}" class="form-control rounded pe-5">
+                        <i class="bx bx-search position-absolute top-50 end-0 translate-middle-y me-3 fs-lg zindex-5"></i>
+                    </form>
+                    <div class="card card-body mb-4">
+                        <h3 class="h5">{% translate 'Categorías' %}</h3>
+
+                        <ul class="nav flex-column fs-sm">
+                            <li class="nav-item mb-1">
+                                <a href="{% url 'vss_article_list' %}" class="nav-link py-1 px-0 {% if not category %}active{% endif %}">{% translate 'Todas' %}</a>
+                            </li>
+                            {% for cat in vss_industry.blog.categories %}
+                                {# NOTE: Mostramos solo aquellas con artículos. #}
+                                {% if cat.num_articles %}
+                                <li class="nav-item {% if not forloop.last %}mb-1{% endif %}">
+                                    <a href="{{ cat.get_absolute_url }}" class="nav-link py-1 px-0 {% if category.pk == cat.pk %}active{% endif %}">{{ cat.name }} <span class="fw-normal opacity-60 ms-1">({{ cat.num_articles }})</span></a>
+                                </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% with featured_articles=vss.blog.featured_articles %}
+                        {% if featured_articles %}
+                            <div class="card card-body border-0 position-relative mb-4">
+                                <span class="position-absolute top-0 start-0 w-100 h-100 bg-dark opacity-10 rounded-3"></span>
+                                <div class="position-relative zindex-2">
+                                    <h3 class="h5">{% translate 'Artículos destacados' %}</h3>
+                                    <ul class="list-unstyled mb-0">
+                                        {% for article in featured_articles %}
+                                        <li class="{% if not forloop.last %}border-bottom pb-3 mb-3{% endif %}">
+                                            <h4 class="h6 mb-2">
+                                                <a href="{{ article.get_absolute_url }}">{{ article.title }}</a>
+                                            </h4>
+                                            <div class="d-flex align-items-center text-muted pt-1">
+                                                <div class="fs-xs border-end pe-3 me-3">{{ article.get_updated_display }}</div>
+                                            </div>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+                    {% with networks=vss.social_networks %}
+                        {% if networks %}
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <h5 class="mb-4">{% translate 'Síguenos' %}</h5>
+                                    {% for network in networks %}
+                                    <a href="{{ network.url }}" target="_blank" class="btn btn-icon btn-sm btn-secondary btn-{{ network.network|lower }} me-2 mb-2" aria-label="{{ network.get_network_display }}">
+                                        {{ network.icon_svg }}
+                                    </a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+                </div>
+            </div>
+        </aside>
+    </div>
+</section>
+<button type="button" data-bs-toggle="offcanvas" data-bs-target="#blog-sidebar" aria-controls="blog-sidebar" class="btn btn-sm btn-primary fixed-bottom d-lg-none w-100 rounded-0">
+    <i class="bx bx-sidebar fs-xl me-2"></i>
+    {% translate 'Barra lateral' %}
+</button>
+{% endblock %}

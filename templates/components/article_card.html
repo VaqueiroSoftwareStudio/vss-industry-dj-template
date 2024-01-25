@@ -1,0 +1,37 @@
+{% load i18n %}
+{% if article.cover %}
+<article class="card border-0 bg-transparent me-xl-5 mb-4">
+    <div class="row g-0">
+        <div class="col-sm-5 position-relative bg-position-center bg-repeat-0 bg-size-cover rounded-3" style="background-image: url({{ article.cover.url }}); min-height: 15rem;">
+            <a href="{{ article.get_absolute_url }}" class="position-absolute top-0 start-0 w-100 h-100" aria-label="Read more"></a>
+        </div>
+        <div class="col-sm-7">
+            <div class="card-body px-0 pt-sm-0 ps-sm-4 pb-0 pb-sm-4">
+                <a href="{% url 'vss_article_category_list' article.category.slug %}" class="badge fs-sm text-dark bg-secondary text-decoration-none mb-3">{{ article.category.name }}</a>
+                <h3 class="h4">
+                    <a href="{{ article.get_absolute_url }}">{{ article.title }}</a>
+                </h3>
+                <div class="mb-4">{{ article.summary|linebreaksbr }}</div>
+                <div class="d-flex align-items-center text-muted">
+                    <div class="fs-sm border-end pe-3 me-3">{{ article.get_updated_display }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</article>
+{% else %}
+<article class="card me-xl-5 mb-4">
+    <div class="card-body">
+        <div class="d-flex justify-content-between mb-3">
+            <a href="{% url 'vss_article_category_list' article.category.slug %}" class="badge fs-sm text-dark bg-secondary text-decoration-none">{{ article.category.name }}</a>
+        </div>
+        <h3 class="h4">
+            <a href="{{ article.get_absolute_url }}">{{ article.title }}</a>
+        </h3>
+        <div class="mb-4">{{ article.summary|linebreaksbr }}</div>
+        <div class="d-flex align-items-center text-muted">
+            <div class="fs-sm border-end pe-3 me-3">{{ article.get_updated_display }}</div>
+        </div>
+    </div>
+</article>
+{% endif %}

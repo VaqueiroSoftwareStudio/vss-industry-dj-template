@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block page_title %}{{ textpage.title }} | {{ vss.branding.site_name }}{% endblock %}
+{% block layout %}
+<nav class="container mt-lg-4" aria-label="breadcrumb">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item">
+            <a href="{% url 'vss_industry_index' %}"><i class="bx bx-home-alt fs-lg me-1"></i>{% translate 'Inicio' %}</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">{{ textpage.title }}</li>
+    </ol>
+</nav>
+<section class="container mt-4 mb-2 mb-md-4 mb-lg-5 pt-lg-2 pb-5">
+    <div class="d-flex align-items-center justify-content-between mb-4 pb-1 pb-md-3">
+        <h1 class="mb-0">{{ textpage.title }}</h1>
+    </div>
+    <div class="row">
+        <div class="col-xl-8 col-lg-9">
+            <div style="text-align: justify;">{{ textpage.content.html|safe }}</div>
+        </div>
+    </div>
+</section>
+{% endblock %}

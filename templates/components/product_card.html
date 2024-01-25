@@ -1,0 +1,26 @@
+{% load i18n %}
+<article class="card h-100 border shadow-sm">
+    {% if product.cover %}
+    <div class="position-relative">
+        <a href="{{ product.get_absolute_url }}" class="d-block position-absolute w-100 h-100 top-0 start-0" aria-label="{% translate 'Enlace del producto' %}"></a>
+        <img src="{{ product.cover.url }}" class="card-img-top" alt="Image">
+    </div>
+    {% endif %}
+    <div class="card-body p-3">
+        <div class="d-flex justify-content-between mb-3">
+            <a href="{% url 'vss_industry_product_category_list' product.category.slug %}" class="badge fs-sm text-dark bg-secondary text-decoration-none">{{ product.category.name }}</a>
+        </div>
+        <h3 class="h5 mb-2">
+            <a href="{{ product.get_absolute_url }}">{{ product.title }}</a>
+        </h3>
+        {% if product.summary %}
+            <div class="fs-sm mb-2">{{ product.summary|linebreaksbr }}</div>
+        {% endif %}
+    </div>
+    <div class="card-footer w-100 p-2">
+        <a href="{{ product.get_absolute_url }}" class="btn btn-sm btn-link w-100">
+            <i class="bx bx-plus-circle fs-lg me-2"></i>
+            {% translate 'Más información' %}
+        </a>
+    </div>
+</article>

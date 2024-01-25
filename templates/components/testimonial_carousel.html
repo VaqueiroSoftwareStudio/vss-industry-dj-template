@@ -1,0 +1,30 @@
+{% load i18n %}
+<div class="px-2 px-sm-0">
+    <div class="swiper" data-swiper-options='{"slidesPerView": 1,"centeredSlides": true,"spaceBetween": 8,"loop": true,"pagination": {"el": ".swiper-pagination","clickable": true},"breakpoints": {"500": {"slidesPerView": 2,"spaceBetween": 24},"1000": {"slidesPerView": 4,"spaceBetween": 24},"1500": {"slidesPerView": 6,"spaceBetween": 24}}}'>
+        <div class="swiper-wrapper">
+            {% for testimonial in testimonials %}
+            <div class="swiper-slide h-auto pt-4">
+                <figure class="d-flex flex-column h-100 px-2 px-sm-0 mb-0">
+                    <div class="card h-100 position-relative border-0 shadow-sm pt-4">
+                        <span class="btn btn-icon btn-primary shadow-primary pe-none position-absolute top-0 start-0 translate-middle-y ms-4">
+                            <i class="bx bxs-quote-left"></i>
+                        </span>
+                        <blockquote class="card-body pb-3 mb-0">
+                            <div>{{ testimonial.description|safe }}</div>
+                        </blockquote>
+                        <div class="card-footer border-0 text-nowrap pt-0">
+                            {{ testimonial.stars_html }}
+                        </div>
+                    </div>
+                    <figcaption class="d-flex align-items-center ps-4 pt-4">
+                        <div>
+                            <h6 class="fs-sm fw-semibold mb-0">{{ testimonial.author }}</h6>
+                        </div>
+                    </figcaption>
+                </figure>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="swiper-pagination position-relative pt-1 pt-sm-3 mt-5"></div>
+    </div>
+</div>

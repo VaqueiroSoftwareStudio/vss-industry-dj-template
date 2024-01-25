@@ -1,0 +1,28 @@
+{% load i18n %}
+<div class="row pb-3">
+    <div class="col-md-5 mb-4 mb-md-0">
+        <div class="card bg-dark h-100 p-lg-5">
+            <div class="card-body p-lg-2">
+                <h2 class="h1 text-light">{% translate 'Preguntas Frecuentes' %}</h2>
+                <p class="fs-xl text-light opacity-70 mb-0">{% translate 'Encuentra respuestas a las preguntas más comunes sobre nuestros productos y servicios.' %}</p>
+            </div>
+            <div class="card-footer border-0 w-100 pt-0 p-4 p-lg-2">
+                <a href="{% url 'vss_industry_contact' %}" class="btn btn-primary btn-lg shadow-primary">{% translate '¡Contáctanos!' %}</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-7">
+        <div class="accordion" id="faq">
+            {% for faq in faqs %}
+            <div class="accordion-item border-0 rounded-3 shadow-sm mb-3">
+                <h3 class="accordion-header">
+                    <button class="accordion-button shadow-none rounded-3 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q-{{ forloop.counter }}" aria-expanded="false" aria-controls="q-{{ forloop.counter }}">{{ faq.question }}</button>
+                </h3>
+                <div class="accordion-collapse collapse" id="q-{{ forloop.counter }}" data-bs-parent="#faq">
+                    <div class="accordion-body fs-sm pt-0">{{ faq.answer.html|safe }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>

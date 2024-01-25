@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block page_title %}{% translate 'Contacto' %} | {{ vss.branding.site_name }}{% endblock %}
+{% block header %}{% include "partials/header.html" with navbar_class='navbar-light bg-secondary' %}{% endblock %}
+{% block layout %}
+<div class="bg-secondary pb-4 pt-lg-4">
+    <nav class="container" aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item">
+                <a href="{% url 'vss_industry_index' %}"><i class="bx bx-home-alt fs-lg me-1"></i>{% translate 'Inicio' %}</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">{% translate 'Contacto' %}</li>
+        </ol>
+    </nav>
+</div>
+<section class="position-relative bg-secondary">
+    <div class="container position-relative zindex-2 mb-2 mb-md-4 mb-lg-5 pt-lg-2 pb-5">
+        {% include "components/messages.html" %}
+        <div class="row">
+            <div class="col-xl-4 col-lg-5 pb-4 pb-sm-5 mb-2 mb-sm-0">
+                <div class="pe-lg-4 pe-xl-0">
+                    <h1 class="pb-3 pb-md-4 mb-lg-5">{% translate 'Contacto' %}</h1>
+                    {% if vss.contact.support_email %}
+                    <div class="d-flex align-items-start pb-3 mb-sm-1 mb-md-3">
+                        <div class="bg-light text-primary rounded-circle flex-shrink-0 fs-3 lh-1 p-3">
+                            <i class="bx bx-envelope"></i>
+                        </div>
+                        <div class="ps-3 ps-sm-4">
+                            <h2 class="h4 pb-1 mb-2">{% translate 'Email' %}</h2>
+                            <p class="mb-2">{% translate 'No dude en escribirnos, responderemos a la brevedad posible.' %}</p>
+                            <a href="mailto:{{ vss.contact.support_email }}" class="btn btn-link btn-lg px-0">
+                                {% translate 'Envía un mensaje' %}
+                                <i class="bx bx-right-arrow-alt lead ms-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if vss.contact.phone %}
+                    <div class="d-flex align-items-start">
+                        <div class="bg-light text-primary rounded-circle flex-shrink-0 fs-3 lh-1 p-3">
+                            <i class="bx bx-phone-call"></i>
+                        </div>
+                        <div class="ps-3 ps-sm-4">
+                            <h2 class="h4 pb-1 mb-2">{% translate 'Teléfono' %}</h2>
+                            <p class="mb-2">Sit ac ipsum leo lorem magna nunc mattis maecenas non vestibulum.</p>
+                            <a href="tel:{{ vss.contact.phone }}" class="btn btn-link btn-lg px-0">
+                                {{ vss.contact.phone_format }}
+                                <i class="bx bx-right-arrow-alt lead ms-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-xl-6 col-lg-7 offset-xl-2">
+                <div class="card border-light shadow-lg py-3 p-sm-4 p-md-5">
+                    <div class="card-body position-relative zindex-2">
+                        <h2 class="card-title pb-3 mb-4">{% translate 'Solicite información' %}</h2>
+                        <form action="" method="post" class="row g-4">
+                            {% csrf_token %}
+                            {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+                            <div class="col-md-12">
+                                {% include "vss/dashboard/fields/field.html" with field=form.name %}
+                            </div>
+                            <div class="col-md-6">
+                                {% include "vss/dashboard/fields/field.html" with field=form.phone %}
+                            </div>
+                            <div class="col-md-6">
+                                {% include "vss/dashboard/fields/field.html" with field=form.email %}
+                            </div>
+                            <div class="col-md-12">
+                                {% include "vss/dashboard/fields/field.html" with field=form.message %}
+                            </div>
+                    
+                            <div class="col-12 pt-2 pt-sm-3">
+                                {% if vss.google_services.recaptcha_site_key %}
+                                    <button type="submit" class="btn btn-lg btn-primary w-100 w-sm-auto g-recaptcha" data-sitekey="{{ vss.google_services.recaptcha_site_key }}" data-callback="onSubmit" data-action="submit">{% translate 'Enviar mensaje' %}</button>
+                                {% else %}
+                                    <button type="submit" class="btn btn-lg btn-primary w-100 w-sm-auto btn-lg">{% translate 'Enviar mensaje' %}</button>
+                                {% endif %}
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="position-absolute bottom-0 start-0 w-100 bg-light" style="height: 8rem;"></div>
+</section>
+{% with locations=vss_industry.locations %}
+    {% if locations %}
+        {% for location in locations %}
+            <section class="container py-2 py-lg-4 py-xl-5 mb-2 mb-md-3">
+                <div class="row py-5">
+                    <div class="col-lg-6 mb-5 mb-lg-0">
+                        <div class="d-flex flex-column h-100 shadow-sm rounded-3 overflow-hidden">
+                            {# NOTE: Ejemplo con class y style para el diseño de la plantilla. #}
+                            {% comment %} <iframe class="d-block h-100" src="{{ location.location_embed }}" style="border: 0; min-height: 300px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Map"></iframe> {% endcomment %}
+                            {% if location.location_embed %}{{ location.location_embed|safe }}{% endif %}
+                        </div>
+                    </div>
+                    <div class="col-lg-5 offset-lg-1">
+                        <h2 class="h4 mb-4">{{ location.name }}</h2>
+                        <ul class="list-unstyled pb-2 pb-lg-0 mb-3">
+                            {% if location.address %}
+                            <li class="d-flex pb-1 mb-2">
+                                <i class="bx bx-map text-primary fs-xl me-2" style="margin-top: .125rem;"></i>
+                                {{ location.address }}
+                            </li>
+                            {% endif %}
+                            {% if location.phone %}
+                            <li class="d-flex pb-1 mb-2">
+                                <i class="bx bx-phone-call text-primary fs-xl me-2" style="margin-top: .125rem;"></i>
+                                {{ location.phone_format }}
+                            </li>
+                            {% endif %}
+                            {# NOTE: Horarios de oficina #}
+                            {% comment %} <li class="d-flex">
+                                <i class="bx bx-time-five text-primary fs-xl me-2" style="margin-top: .125rem;"></i>
+                                <div>
+                                    <strong class="text-nav">Mon - Fri</strong>: 9:00 am - 22:00 am
+                                    <br>
+                                    <strong class="text-nav">Sat - Sun:</strong>: 9:00 am - 20:00 am
+                                </div>
+                            </li> {% endcomment %}
+                        </ul>
+                        {% with social_networks=vss.social_networks %}
+                            {% if social_networks %}
+                                <div class="d-flex pt-1 pt-md-3 pt-xl-4">
+                                    {% for network in social_networks %}
+                                        <a href="{{ network.url }}" class="btn btn-icon btn-secondary btn-{{ network.network|lower }} me-3" aria-label="{{ network.get_network_display }}" target="_blank">
+                                            <i class="bx bxl-{{ network.network|lower }}"></i>
+                                        </a>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+                </div>
+            </section>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+{% with faqs=vss.faqs %}
+    {% if faqs %}
+    <section class="container py-lg-4 py-xl-5 mt-3 mb-5">
+        {% include "components/faqs.html" with faqs=faqs %}
+    </section>
+    {% endif %}
+{% endwith %}
+{% endblock %}

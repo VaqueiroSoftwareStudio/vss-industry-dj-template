@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block page_title %}{{ product.title }} | {{ vss.branding.site_name }}{% endblock %}
+{% block layout %}
+<nav class="container mt-lg-4" aria-label="breadcrumb">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item">
+            <a href="{% url 'vss_industry_index' %}"><i class="bx bx-home-alt fs-lg me-1"></i>{% translate 'Inicio' %}</a>
+        </li>
+        
+        <li class="breadcrumb-item">
+            <a href="{% url 'vss_industry_product_list' %}">{% translate 'Catálogo' %}</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{% url 'vss_industry_product_category_list' product.category.slug %}">{{ product.category.name }}</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">{{ product.title }}</li>
+    </ol>
+</nav>
+<section class="container mt-4 mb-5 pt-2 pb-lg-5">
+    <div class="row gy-4">
+        <div class="col-lg-7 col-md-6">
+            <img src="{{ product.cover.url }}" alt="{{ product.title }} cover" class="rounded-3">
+        </div>
+        <div class="col-lg-5 col-md-6">
+            <div class="ms-xl-5 ms-lg-4 ps-xxl-34">
+                <h1 class="display-5 pb-md-3">{{ product.title }}</h1>
+                <div class="d-flex align-items-center flex-wrap text-muted mb-lg-5 mb-md-4 mb-3">
+                    <div class="fs-xs pe-3 me-3 mb-2">
+                        <a href="{% url 'vss_industry_product_category_list' product.category.slug %}" class="badge bg-faded-primary text-primary fs-base">{{ product.category.name }}</a>
+                    </div>
+                </div>
+                {% if product.summary %}<div class="mb-0 fs-lg">{{ product.summary|linebreaksbr }}</div>{% endif %}
+                {% with attachments=product.attachments.all %}
+                    {% if attachments %}
+                    <div class="btn-group dropdown">
+                        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="bx bx-download fs-lg me-2"></i>
+                            {% translate 'Descargar' %}
+                        </button>
+                        <div class="dropdown-menu my-1">
+                            {% for attachment in attachments %}
+                            <a href="{{ attachment.attachment.url }}" download="{{ attachment.title|slugify }}" class="dropdown-item">{{ attachment.title }}</a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endwith %}
+            </div>
+        </div>
+    </div>
+</section>
+<section class="container pt-5 mt-2 mt-lg-4 mt-xl-5">
+    <div class="row">
+        <div class="col-xl-7 col-lg-8 col-md-7 order-md-1 mb-5">
+            {{ product.description.html|safe }}
+        </div>
+        <aside class="col-lg-4 col-md-5 offset-xl-1 order-md-2 mb-5">
+            <div style="margin-top: -96px;"></div>
+            <div class="position-sticky top-0 pt-5">
+                <div class="pt-5 mt-md-3">
+                    <div class="card shadow-sm p-sm-3">
+                        <div class="card-body">
+                            <h4 class="mb-4">{% translate 'Solicita información' %}</h4>
+                            {% if vss.contact.support_email %}
+                            <a href="mailto:{{ vss.contact.support_email }}" target="_blank"  class="d-flex align-items-center mb-3 text-decoration-none">
+                                <div class="btn btn-icon btn-secondary btn-lg pe-none rounded d-lg-none d-xl-inline-flex">
+                                    <i class="bx bx-envelope text-primary fs-3"></i>
+                                </div>
+                                <ul class="list-unstyled ps-3 ps-lg-0 ps-xl-3 mb-0">
+                                    <li><strong class="text-dark">{% translate 'Email' %}</strong></li>
+                                    <li>{{ vss.contact.support_email }}</li>
+                                </ul>
+                            </a>
+                            {% endif %}
+                            {% if vss.contact.phone %}
+                            <a href="tel:{{ vss.contact.phone }}" target="_blank"  class="d-flex align-items-center mb-3 text-decoration-none">
+                                <div class="btn btn-icon btn-secondary btn-lg pe-none rounded d-lg-none d-xl-inline-flex">
+                                    <i class="bx bxs-phone-call text-primary fs-3"></i>
+                                </div>
+                                <ul class="list-unstyled ps-3 ps-lg-0 ps-xl-3 mb-0">
+                                    <li><strong class="text-dark">{% translate 'Teléfono' %}</strong></li>
+                                    <li>{{ vss.contact.phone_format }}</li>
+                                </ul>
+                            </a>
+                            {% endif %}
+                            {% if vss.contact.whatsapp %}
+                            <a href="https://wa.me/{{ vss.contact.whatsapp }}" target="_blank" class="d-flex align-items-center text-decoration-none">
+                                <div class="btn btn-icon btn-secondary btn-lg pe-none rounded d-lg-none d-xl-inline-flex">
+                                    <i class="bx bxl-whatsapp text-primary fs-3"></i>
+                                </div>
+                                <ul class="list-unstyled ps-3 ps-lg-0 ps-xl-3 mb-0">
+                                    <li><strong class="text-dark">{% translate 'WhatsApp' %}</strong></li>
+                                    <li>{{ vss.contact.whatsapp_format }}</li>
+                                </ul>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+</section>
+{% with faqs=vss.faqs %}
+    {% if faqs %}
+    <section class="container py-lg-4 py-xl-5 mt-3 mb-5">
+        {% include "components/faqs.html" with faqs=faqs %}
+    </section>
+    {% endif %}
+{% endwith %}
+{% with testimonials=vss.testimonials %}
+    {% if testimonials %}
+    <section class="pt-2 pb-lg-4 pb-xl-5 mb-5">
+        <h2 class="h1 text-center pb-3 pb-md-4 pb-xl-5">{% translate 'Opinión de nuestros clientes' %}</h2>
+        {% include "components/testimonial_carousel.html" with testimonials=testimonials %}
+    </section>
+    {% endif %}
+{% endwith %}
+{% endblock %}

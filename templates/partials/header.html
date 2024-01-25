@@ -1,0 +1,119 @@
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+{% get_available_languages as LANGUAGES %}
+{% get_language_info_list for LANGUAGES as languages %}
+{% with LANGUAGE_CODE|language_name_translated as LANGUAGE_NAME %}
+{% url 'vss_industry_index' as index_url %}
+{% url 'vss_industry_about' as about_url %}
+{% url 'vss_industry_contact' as contact_url %}
+{% url 'vss_industry_product_list' as catalog_url %}
+{% url 'vss_article_list' as blog_url %}
+<header class="header">
+    <div class="topbar {{ topbar_class|default:'topbar-dark bg-dark' }}">
+        <div class="container d-flex align-items-center px-0 px-xl-3">
+            {% if vss.contact.phone %}
+                <div class="me-3">
+                    <a href="tel:{{ vss.contact.phone }}" target="_blank" class="topbar-link d-md-inline-block d-none">
+                        {% translate 'Teléfono' %}
+                        <span class='ms-1 fw-bold'>{{ vss.contact.phone_format }}</span>
+                    </a>
+                    <a href="tel:{{ vss.contact.phone }}" target="_blank" class="topbar-link d-md-none d-inline-block text-nowrap">
+                        <i class='bx bx-phone-call align-middle' ></i>
+                        {{ vss.contact.phone_format }}
+                    </a>
+                </div>
+            {% endif %}
+            <div class="dropdown ms-auto">
+                <a href="#" class="topbar-link dropdown-toggle" data-bs-toggle="dropdown">
+                    <i class='bx bx-globe me-1 fs-base align-middle'></i>
+                    {{ LANGUAGE_NAME }}
+                </a>
+                <div class="dropdown-menu dropdown-menu-end">
+                    {% for language in languages %}
+                    <div class="dropdown-item">
+                        <form method="post" action="{% url 'set_language' %}">
+                            {% csrf_token %}
+                            <input name="next" type="hidden" value="{{ request.get_full_path|slice:'3:' }}">
+                            <input type="hidden" name="language" value="{{ language.code }}">
+                            <button type="submit" class="btn nav-link p-0 {% if language.code == LANGUAGE_CODE %}text-primary{% endif %}">{{ language.name_local|title }}</button>
+                        </form>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <a href="{% url 'login' %}" class="topbar-link d-lg-inline-block d-none ms-4 ps-1 text-decoration-none text-nowrap" target="_blank">
+                <i class="bx bx-log-in-circle me-1 fs-base align-middle"></i>
+                {% translate 'Iniciar sesión' %}
+            </a>
+        </div>
+    </div>
+    <div class="navbar navbar-expand-lg navbar-sticky py-3 {{ navbar_class|default:'navbar-light bg-light' }}" data-fixed-element>
+        <div class="container px-3">
+            <a href="{{ index_url }}" class="navbar-brand pe-3">
+                <img src="{{ vss.branding.get_logo_dark }}" alt="{{ vss.branding.site_name }}" style="height: 35px !important;">
+            </a>
+            <div id="navbarNav" class="offcanvas offcanvas-end">
+                <div class="offcanvas-header border-bottom">
+                    <h5 class="offcanvas-title">{% translate 'Menú' %}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <form action="{{ catalog_url }}" method="get" class="d-lg-none d-block">
+                        <div class="input-group mb-4">
+                            <input class="form-control w-100 pe-5 rounded" type="text" name="product_search" value="{{ request.GET.product_search }}" placeholder="{% translate 'Buscar en catálogo...' %}">
+                            <i class="bx bx-search-alt-2 lead position-absolute end-0 top-50 translate-middle-y me-3 zindex-5"></i>
+                        </div>
+                    </form>
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a href="{{ index_url }}" class="nav-link">{% translate 'Inicio' %}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ about_url }}" class="nav-link">{% translate 'Acerca' %}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ catalog_url }}" class="nav-link">{% translate 'Catálogo' %}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ blog_url }}" class="nav-link">{% translate 'Novedades' %}</a>
+                        </li>
+                        <!--
+                        <li class="nav-item">
+                            <a href="{{ contact_url }}" class="nav-link">{% translate 'Contacto' %}</a>
+                        </li>
+                        -->
+                    </ul>
+                </div>
+                <div class="offcanvas-header border-top d-block d-lg-none">
+                    {% if vss.contact.whatsapp %}
+                    <div class="d-block w-100">
+                        <a href="https://wa.me/{{ vss.contact.whatsapp }}" target="_blank" class="btn btn-secondary btn-whatsapp w-100 d-flex mb-3">
+                            <i class='bx bxl-whatsapp fs-lg me-2'></i>
+                            {% translate 'WhatsApp' %}
+                        </a>
+                    </div>
+                    {% endif %}
+                    <div class="d-block w-100">
+                        <a href="{{ contact_url }}" class="btn btn-primary w-100">
+                            <i class='bx bx-envelope fs-lg me-2'></i>
+                            {% translate 'Contacto' %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <form action="{{ catalog_url }}" method="get" class="pe-lg-1 ms-auto me-3 d-lg-block d-none" style="max-width: 21rem;">
+                <div class="input-group" >
+                    <input class="form-control w-100 pe-5 rounded" type="text" name="product_search" value="{{ request.GET.product_search }}" placeholder="{% translate 'Buscar en catálogo...' %}">
+                    <i class="bx bx-search-alt-2 lead position-absolute end-0 top-50 translate-middle-y me-3 zindex-5"></i>
+                </div>
+            </form>
+            <button type="button" class="navbar-toggler" data-bs-toggle="offcanvas" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <a href="{{ contact_url }}" class="btn btn-primary rounded d-none d-lg-inline-flex">
+                {% translate 'Contacto' %}
+            </a>
+        </div>
+    </div>
+</header>
+{% endwith %}

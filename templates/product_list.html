@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block page_title %}{% if category %}{{ category.name }}{% else %}{% translate 'Catálogo' %}{% endif %} | {{ vss.branding.site_name }}{% endblock %}
+{% block layout %}
+<nav class="container mt-lg-4" aria-label="breadcrumb">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item">
+            <a href="{% url 'vss_industry_index' %}"><i class="bx bx-home-alt fs-lg me-1"></i>{% translate 'Inicio' %}</a>
+        </li>
+        {% if category %}
+        <li class="breadcrumb-item">
+            <a href="{% url 'vss_industry_product_list' %}">{% translate 'Catálogo' %}</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">{{ category.name }}</li>
+        {% else %}
+        <li class="breadcrumb-item active" aria-current="page">{% translate 'Catálogo' %}</li>
+        {% endif %}
+    </ol>
+</nav>
+<section class="container mt-4 mb-2 mb-md-4 mb-lg-5 pt-lg-2 pb-5">
+    <div class="row justify-content-between pb-1 pb-md-3">
+        <div class="col-12 col-md-6">
+            <h1 class="mb-4">{% if category %}{{ category.name }}{% else %}{% translate 'Catálogo' %}{% endif %}</h1>
+        </div>
+        <div class="col-12 col-md-4 col-lg-3">
+            <div class="btn-group dropdown w-100 mb-4">
+                <button type="button" class="btn btn-outline-secondary dropdown-toggle justify-content-between" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {% if category %}{{ category.name }}{% else %}{% translate 'Todas las categorías' %}{% endif %}
+                </button>
+                <div class="dropdown-menu my-1">
+                    {% for category in vss_industry.catalog.categories.in_use %}
+                        <a href="{% url 'vss_industry_product_category_list' category.slug %}" class="dropdown-item">{{ category.name }}</a>
+                    {% endfor %}
+                    <div class="dropdown-divider"></div>
+                    <a href="{% url 'vss_industry_product_list' %}" class="dropdown-item">{% translate 'Todas las categorías' %}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {# NOTE: Buscador móvil. La plantilla tiene un buscador en la barra superior, #}
+    {#       pero este está oculto en movil por defaul. Este siempre está visible #}
+    {#       aunque solo en el listado de catalogo. #}
+    <form action="{% url 'vss_industry_product_list' %}" method="get" class="mb-4 d-lg-none position-relative">
+        <input type="text" name="product_search" value="{{ request.GET.product_search }}" placeholder="{% translate 'Buscar en catálogo ...' %}" class="form-control rounded pe-5">
+        <i class="bx bx-search position-absolute top-50 end-0 translate-middle-y me-3 fs-lg zindex-5"></i>
+    </form>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 gx-3 gx-md-4 mt-n2 mt-sm-0">
+        {% for product in products %}
+        <div class="col pb-1 pb-lg-3 mb-4">
+            {% include "components/product_card.html" %}
+        </div>
+        {% endfor %}
+    </div>
+    {% include "components/pagination.html" %}
+</section>
+{% endblock %}

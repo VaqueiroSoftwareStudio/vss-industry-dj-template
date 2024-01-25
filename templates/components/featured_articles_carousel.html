@@ -1,0 +1,36 @@
+{% load i18n %}
+<div class="swiper mx-n2" data-swiper-options='{"slidesPerView": 1,"spaceBetween": 8,"pagination": {"el": ".swiper-pagination","clickable": true},"breakpoints": {"500": {"slidesPerView": 2},"1000": {"slidesPerView": 3}}}'>
+    <div class="swiper-wrapper">
+        {% for article in articles %}
+        <div class="swiper-slide h-auto pb-3">
+            <article class="card shadow-sm h-100 mx-2 {% if article.cover %}border-0{% else %}border{% endif %}">
+                {% if article.cover %}
+                <div class="position-relative">
+                    <a href="{{ article.get_absolute_url }}" class="position-absolute top-0 start-0 w-100 h-100" aria-label="{% translate 'Leer más' %}"></a>
+                    <img src="{{ article.cover.url }}" class="card-img-top" alt="{{ article.title }}">
+                </div>
+                {% endif %}
+                <div class="card-body pb-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <a href="{{ article.category.get_absolute_url }}" class="badge fs-sm text-dark bg-secondary text-decoration-none">{{ article.category.name }}</a>
+                        <span class="fs-sm text-muted">{{ article.get_updated_display }}</span>
+                    </div>
+                    <h3 class="h5 mb-0">
+                        <a href="{{ article.get_absolute_url }}">{{ article.title }}</a>
+                    </h3>
+                    {% if not article.cover %}<div class="mt-3">{{ article.summary|linebreaksbr }}</div>{% endif %}
+                </div>
+                <div class="card-footer py-4">
+                    <div class="d-flex align-items-center fw-bold text-dark text-decoration-none">
+                        <span class="d-flex align-items-center justify-content-center fw-bold text-white rounded-circle bg-primary me-2" style="width:40px; height:40px;">
+                            <span>{{ article.author.get_full_name|slice:1 }}</span>
+                        </span>
+                        {{ article.author.get_full_name }}
+                    </div>
+                </div>
+            </article>
+        </div>
+        {%  endfor %}
+    </div>
+    <div class="swiper-pagination position-relative pt-2 pt-sm-3 mt-4"></div>
+</div>

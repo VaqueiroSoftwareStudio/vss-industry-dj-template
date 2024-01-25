@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block page_title %}{{ article.title }} | {{ vss.branding.site_name }}{% endblock %}
+{% block page_head %}
+    <meta property="og:title" content="{{ article.title }}" />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="{{ request.build_absolute_uri }}" />
+    <meta property="og:site_name" content="{{ vss.branding.site_name }}" />
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ article.title }}">
+    {% if article.cover %}
+    <meta property="og:image" content="{{ article.cover.url }}" />
+    <meta name="twitter:image" content="{{ article.cover.url }}">
+    {% endif %}
+    <script type="application/ld+json">{{ article_schema|safe }}</script>
+{% endblock %}
+{% block layout %}
+<nav class="container mt-lg-4" aria-label="breadcrumb">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item">
+            <a href="{% url 'vss_industry_index' %}"><i class="bx bx-home-alt fs-lg me-1"></i>{% translate 'Inicio' %}</a>
+        </li>
+        <li class="breadcrumb-item active">
+            <a href="{% url 'vss_article_list' %}">{% translate 'Novedades' %}</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">{{ article.title }}</li>
+    </ol>
+</nav>
+<section class="container mt-4 pt-lg-2 pb-3">
+    {% include "components/messages.html" %}
+    <h1 class="pb-3" style="max-width: 970px;">{{ article.title }}</h1>
+    <div class="d-flex flex-md-row flex-column align-items-md-center justify-content-md-between mb-3">
+        <div class="d-flex align-items-center flex-wrap text-muted mb-md-0 mb-4">
+            <div class="fs-xs border-end pe-3 me-3 mb-2">
+                <a href="{{ article.category.get_absolute_url }}" class="badge bg-faded-primary text-primary fs-base">{{ article.category.name }}</a>
+            </div>
+            <div class="fs-sm pe-3 me-3 mb-2">{{ article.get_updated_display }}</div>
+        </div>
+        <div class="d-flex align-items-center position-relative ps-md-3 pe-lg-5 mb-2">
+            <span class="d-flex align-items-center justify-content-center fw-bold text-white rounded-circle bg-primary" style="width:50px; height:50px;">
+                <span>{{ article.author.get_full_name|slice:1 }}</span>
+            </span>
+            <div class="ps-3">
+                <h6 class="mb-1">{% translate 'Autor' %}</h6>
+                <div class="fw-semibold text-body lh-1">{{ article.author.get_full_name }}</div>
+            </div>
+        </div>
+    </div>
+</section>
+{% if article.cover %}
+{# NOTE: El comentario es un diseño que abarca el 100% de la pantalla. Util para diseños más visuales. #}
+{% comment %} <div class="jarallax mb-lg-5 mb-4" data-jarallax data-speed="0.35" style="height: 36.45vw; min-height: 300px;">
+    <div class="jarallax-img" style="background-image: url({{ article.cover.url }});"></div>
+</div> {% endcomment %}
+<section class="container mb-lg-5 mb-4">
+    <div class="row">
+        <div class="col-lg-9">
+            <img src="{{ article.cover.url }}" class="img-fluid">
+        </div>
+    </div>
+</section>
+{% endif %}
+<section class="container mb-5 pt-4 pb-2 py-mg-4">
+    <div class="row gy-4">
+        <div class="col-lg-9">{{ article.content.html|safe }}</div>
+        <div class="col-lg-3 position-relative">
+            <div class="sticky-top ms-xl-5 ms-lg-4 ps-xxl-4" style="top: 105px !important;">
+                <h6>{% translate 'Compartir:' %}</h6>
+                {% include "components/share.html" %}
+            </div>
+        </div>
+    </div>
+</section>
+<section class="container mb-4 pt-lg-4 pb-lg-3">
+    <h2 class="h1 text-center text-sm-start">{% translate 'Comentarios' %}</h2>
+    <div class="row">
+        <div class="col-lg-9">
+            {% for comment in article.get_comments %}
+            <div class="py-4">
+                <div class="d-flex align-items-center justify-content-between pb-2 mb-1">
+                    <div class="d-flex align-items-center me-3">
+                        <span class="d-flex align-items-center justify-content-center fw-bold text-white rounded-circle bg-dark" style="width:40px; height:40px;">
+                            <span>{{ comment.get_user_name|slice:1 }}</span>
+                        </span>
+                        <div class="ps-2">
+                            <h6 class="fw-semibold lh-1 mb-0">{{ comment.get_user_name }}</h6>
+                            <span class="fs-sm text-muted">{{ comment.get_created_display }}</span>
+                        </div>
+                  </div>
+                </div>
+                <div>{{ comment.get_comment|linebreaks }}</div>
+            </div>
+            {% if not forloop.last%}<hr class="my-2">{% endif %}
+            {% empty %}
+            <div class="py-4">
+                <p class="mb-0">{% translate 'Aún no hay comentarios. Utiliza el formulario siguiente para compartir tu opinión.' %}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+<section class="container mb-4 pb-2 mb-md-5 pb-lg-5">
+    <div class="row gy-5">
+        <div class="col-lg-9">
+            <div class="card p-md-5 p-4 border-0 bg-secondary">
+                <div class="card-body w-100 mx-auto px-0" style="max-width: 746px;">
+                    <h2 class="mb-4 pb-3">{% translate 'Deja un comentario' %}</h2>
+                    <form action="{% url 'vss_articlecomment_create' article.pk %}" method="post">
+                        {% csrf_token %}
+                        {% include "vss/dashboard/fields/form_fields.html" %}
+                        <div class="col-md-12">
+                            {% if vss.google_services.recaptcha_site_key %}
+                                <button type="submit" class="btn btn-block btn-primary rounded-pill btn-lg g-recaptcha" data-sitekey="{{ vss.google_services.recaptcha_site_key }}" data-callback="onSubmit" data-action="submit">{% translate 'Enviar' %}</button>
+                            {% else %}
+                                <button type="submit" class="btn btn-block btn-primary rounded-pill btn-lg">{% translate 'Enviar' %}</button>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% with featured_articles=vss.blog.featured_articles %}
+    {% if featured_articles %}
+        <section class="container mb-5 pt-md-4">
+            <div class="d-flex flex-sm-row flex-column align-items-center justify-content-between mb-4 pb-1 pb-md-3">
+                <h2 class="h3 mb-sm-0">{% translate 'Artículos destacados' %}</h2>
+                <a href="{% url 'vss_article_list' %}" class="btn btn-outline-primary ms-4">
+                    {% translate 'Ver todos' %}
+                    <i class="bx bx-right-arrow-alt ms-1 me-n1 lh-1"></i>
+                </a>
+            </div>
+            {% include "components/featured_articles_carousel.html" with articles=featured_articles %}
+        </section>
+    {% endif %}
+{% endwith %}
+{% endblock %}
